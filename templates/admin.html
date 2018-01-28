@@ -20,6 +20,7 @@
   <h1>{{ user.username }}</h1>
   <h2>({{ user.lat }}, {{ user.lng }})</h2>
   <h2>Preferences: {{ user.preferences }}</h2>
+  <h2>Score: {{ user.score }}</h2>
   <table id="{{ user.username }}-table">
     <tr>
       <th style="text-align: left">Categories</th>
@@ -137,6 +138,10 @@
   </label>
   <label>Long
     <input type="text" name="lng">
+  </label>
+  <br>
+  <label>Score
+    <input type="text" name="score">
   </label>
   <br>
   <p>Preferences</p>

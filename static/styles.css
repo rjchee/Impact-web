@@ -16,3 +16,7 @@ body {
 .login-form:focus {
     outline: 0;
 }
+
+table {
+    padding: 10px 10px 10px 10px;
+}

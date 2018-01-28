@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block body %}
+<h1>{{ user.username }}</h1>
+{% if sent_donations %}
+<h2>Sent Donations</h2>
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Donation</th>
+  </tr>
+  {% for entry in sent_donations %}
+  <tr>
+    <td>{{ entry.categories }}</td>
+    <td>{{ entry.value }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% if received_donations %}
+<table>
+  <tr>
+    <td>Score</td>
+    <td>{{ user.score }}/5.0</td>
+  </tr>
+  {% if user.preferences %}
+  <tr>
+    <td>Donations Needed in:</td>
+    <td>
+      {% for pref in user.preferences %}
+      <p>{{ pref.name }}</p>
+      {% endfor %}
+    </td>
+  </tr>
+  {% endif %}
+</table>
+
+<h2>Received Donations</h2>
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Amount</th>
+  </tr>
+  {% for entry in received_donations %}
+  <tr>
+    <td>{{ entry.categories }}</td>
+    <td>{{ entry.value }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

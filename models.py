@@ -16,10 +16,12 @@ class User(db.Model):
     lat = db.Column(db.Float(10))
     lng = db.Column(db.Float(10))
     preferences = db.relationship('Category', secondary=preferences_table)
+    score = db.Column(db.Float(5))
 
     def __init__(self, n):
         self.username = n
         self.account = Account()
+        self.score = 5.0
 
 
 class Account(db.Model):

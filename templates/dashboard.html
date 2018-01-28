@@ -29,12 +29,34 @@ html, body {
         center: {lat: position.coords.latitude, lng: position.coords.longitude},
         zoom: 16
       });
+      populateMarkers(map);
     }, function () {
-        map = new google.maps.Map(document.getElementById('map'), {
+      map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 30.6116439, lng: -96.34170909999999},
           zoom: 16
         });
+      populateMarkers(map);
     });
+  }
+  function populateMarkers(map) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+        var jsonResp = JSON.parse(xhr.responseText);
+        jsonResp.users.forEach(function (u) {
+          var marker = new google.maps.Marker({
+            position: {lat: u.location[0], lng: u.location[1]},
+            map: map,
+            title: u.username
+          });
+          marker.addListener('click', function () {
+            window.location = `/view/${this.title}`
+          });
+        });
+      }
+    };
+    xhr.open("GET", "/api/users/", true);
+    xhr.send();
   }
 </script>
 <script async defer

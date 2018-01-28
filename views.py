@@ -15,6 +15,15 @@ def index():
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/view/<username>')
+def view(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        return error('user {} was not found'.format(username))
+    sent_donations = consolidate_donations(user.sent_donations, all_strings=True)
+    received_donations = consolidate_donations(user.received_donations, all_strings=True)
+    return render_template('view.html', user=user, sent_donations=sent_donations, received_donations=received_donations)
+
 # API Functions
 
 def error(message):
@@ -56,6 +65,12 @@ def edit_user():
         user.lat = lat
     if lng:
         user.lng = lng
+    score = request.form.get('score')
+    if score:
+        try:
+            user.score = float(score)
+        except:
+            return error('score must be a number')
     prefs = request.form.getlist('categories')
     if prefs:
         user.preferences = Category.query.filter(Category.name.in_(prefs)).all()
@@ -98,14 +113,14 @@ def donate_money():
     return jsonify({'success': True})
 
 
-def consolidate_donations(donations):
+def consolidate_donations(donations, all_strings=False):
     aggregate = defaultdict(float)
     for donation in donations:
         aggregate[tuple(sorted(c.name for c in donation.categories))] += float(donation.value)
     result = []
     for categories, value in aggregate.items():
         result.append({
-            'categories': list(categories),
+            'categories': ', '.join(categories) if all_strings else list(categories),
             'value': value
         })
     return result
@@ -133,7 +148,7 @@ def get_users():
     for u in users:
         sent_donations = consolidate_donations(u.sent_donations)
         received_donations = consolidate_donations(u.received_donations)
-        obj = {'sent_donations_breakdown': sent_donations, 'received_donations_breakdown': received_donations}
+        obj = {'username': u.username, 'sent_donations_breakdown': sent_donations, 'received_donations_breakdown': received_donations, 'preferences': [c.name for c in u.preferences], 'location': [u.lat, u.lng]}
         results.append(obj)
     return jsonify({'success': True, 'users': results})
 
