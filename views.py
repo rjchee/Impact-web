@@ -51,7 +51,8 @@ def create_user():
         db.session.add(user)
         db.session.commit()
         return jsonify({'success': True})
-    except:
+    except Exception as e:
+        print(e)
         return error('the username already exists')
 
 @app.route('/api/user/edit', methods=['POST'])
