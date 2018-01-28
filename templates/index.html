@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Impact{% endblock %}
+
+{% block body %}
+<div class="center">
+  <img src="{{ url_for('static', filename='img/impact.png') }}">
+</div>
+<div class="center">
+  <input type="text" name="username" placeholder="Username" class="login-form">
+  <button type="submit" value="Login" class="login-form" id="login">
+    <i class="icon-circle-arrow-right icon-large"></i> Next
+  </button>
+</div>
+
+<script>
+  (function() {
+    var button = document.getElementById('login');
+    button.onclick = function () {
+      var username = document.querySelector("input[type=text]").value;
+      localStorage.setItem('username', username);
+      window.location = '/dashboard';
+    };
+  })();
+</script>
+{% endblock %}

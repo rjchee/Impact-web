@@ -1,0 +1,18 @@
+body {
+    background-color: rgb(218, 73, 73);
+    color: white;
+}
+
+.center {
+    text-align: center;
+}
+
+.login-form {
+    font-size: 24px;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.login-form:focus {
+    outline: 0;
+}

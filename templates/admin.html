@@ -1,138 +1,137 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Admin Page</title>
-    <script>
-      function hideElement(eid) {
-        let node = document.getElementById(eid);
-        if (node.style.display === 'block') {
-          node.style.display = 'none';
-        } else {
-          node.style.display = 'block';
-        }
-      }
-    </script>
-  </head>
-  <body>
-    <button type="button" onclick="hideElement('users')">Toggle Users Display</button>
-    <div id="users" style="display: none">
-      {% for user in users %}
-      <h1>{{ user.username }}</h1>
-      <table id="{{ user.username }}-table">
-        <tr>
-          <th style="text-align: left">Categories</th>
-          <th style="text-align: left">Balance</th>
-          <th style="text-align: left">Sent Donations Total</th>
-          <th style="text-align: left">Received Donations Total</th>
-        </tr>
-      </table>
-      <script>
-          (function () {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-              if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
-                if (xmlhttp.status == 200) {
-                  var jsonResp = JSON.parse(xmlhttp.responseText);
-                  var balance = jsonResp.balance;
-                  var table = document.getElementById("{{ user.username }}-table");
-                  var rowNode = document.createElement('tr');
-                  balance.forEach(function (entry) {
+{% extends "base.html" %}
+{% block title %}Admin Page{% endblock %}
+{% block head %}
+<script>
+  function hideElement(eid) {
+    let node = document.getElementById(eid);
+    if (node.style.display === 'block') {
+      node.style.display = 'none';
+    } else {
+      node.style.display = 'block';
+    }
+  }
+</script>
+{% endblock %}
 
-                    var categories = entry.categories.join(', ');
+{% block body %}
+<button type="button" onclick="hideElement('users')">Toggle Users Display</button>
+<div id="users" style="display: none">
+  {% for user in users %}
+  <h1>{{ user.username }}</h1>
+  <table id="{{ user.username }}-table">
+    <tr>
+      <th style="text-align: left">Categories</th>
+      <th style="text-align: left">Balance</th>
+      <th style="text-align: left">Sent Donations Total</th>
+      <th style="text-align: left">Received Donations Total</th>
+    </tr>
+  </table>
+  <script>
+    (function () {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+          if (xmlhttp.status == 200) {
+            var jsonResp = JSON.parse(xmlhttp.responseText);
+            var balance = jsonResp.balance;
+            var table = document.getElementById("{{ user.username }}-table");
+            var rowNode = document.createElement('tr');
+            balance.forEach(function (entry) {
 
-                    var categoryNode = document.createElement("td");
-                    categoryNode.style.text_align = 'left';
-                    categoryNode.appendChild(document.createTextNode(categories));
-                    rowNode.appendChild(categoryNode);
+              var categories = entry.categories.join(', ');
 
-                    var valueNode = document.createElement('td');
-                    valueNode.style.text_align = 'left';
-                    valueNode.appendChild(document.createTextNode(entry.value));
-                    rowNode.appendChild(valueNode);
+              var categoryNode = document.createElement("td");
+              categoryNode.style.text_align = 'left';
+              categoryNode.appendChild(document.createTextNode(categories));
+              rowNode.appendChild(categoryNode);
 
-                    var sentDonation = jsonResp.sent_donations_breakdown.find(function (el) {
-                      return el.categories.join(', ') === categories;
-                    });
-                    if (sentDonation !== undefined) {
-                      var sentNode = document.createElement('td');
-                      sentNode.style.text_align = 'left';
-                      sentNode.appendChild(document.createTextNode(sentDonation.value));
-                      rowNode.appendChild(sentNode);
-                    }
+              var valueNode = document.createElement('td');
+              valueNode.style.text_align = 'left';
+              valueNode.appendChild(document.createTextNode(entry.value));
+              rowNode.appendChild(valueNode);
 
-                    var receivedDonation = jsonResp.received_donations_breakdown.find(function (el) {
-                      return el.categories.join(', ') === categories;
-                    });
-                    if (receivedDonation !== undefined) {
-                      var receivedNode = document.createElement('td');
-                      receivedNode.style.text_align = 'left';
-                      receivedNode.appendChild(document.createTextNode(receivedDonation.value));
-                      rowNode.appendChild(receivedNode);
-                    }
-
-                    table.appendChild(rowNode);
-                  });
-                }
-                else if (xmlhttp.status == 400) {
-                  alert('There was an error 400');
-                }
-                else {
-                  alert('something else other than 200 was returned');
-                }
+              var sentDonation = jsonResp.sent_donations_breakdown.find(function (el) {
+                return el.categories.join(', ') === categories;
+              });
+              if (sentDonation !== undefined) {
+                var sentNode = document.createElement('td');
+                sentNode.style.text_align = 'left';
+                sentNode.appendChild(document.createTextNode(sentDonation.value));
+                rowNode.appendChild(sentNode);
               }
-            };
 
-            xmlhttp.open("GET", "/api/user/{{ user.username }}", true);
-            xmlhttp.send();
-          })();
-      </script>
-      {% endfor %}
-    </div>
+              var receivedDonation = jsonResp.received_donations_breakdown.find(function (el) {
+                return el.categories.join(', ') === categories;
+              });
+              if (receivedDonation !== undefined) {
+                var receivedNode = document.createElement('td');
+                receivedNode.style.text_align = 'left';
+                receivedNode.appendChild(document.createTextNode(receivedDonation.value));
+                rowNode.appendChild(receivedNode);
+              }
 
-    <h2>Create a User</h2>
-    <form id="create_user" action="/api/user/new" method="POST">
-      <label>Username:
-        <br>
-        <input type="text" name="username">
-      </label>
-      <br>
-      <input type="submit">
-    </form>
+              table.appendChild(rowNode);
+            });
+          }
+          else if (xmlhttp.status == 400) {
+            alert('There was an error 400');
+          }
+          else {
+            alert('something else other than 200 was returned');
+          }
+        }
+      };
 
-    <h2>Send Money</h2>
-    <form id="add_money" action="/api/user/donate" method="POST">
-      <label>Sender Username:
-        <br>
-        <input type="text" name="sender">
-      </label>
-      <br>
-      <label>Receiver Username:
-        <br>
-        <input type="text" name="receiver">
-      </label>
-      <br>
-      <label>Amount to Send:
-        <br>
-        <input type="text" name="value">
-      </label>
-      <br>
-      <div>
-        <input type="checkbox" id="food" name="categories" value="Food">
-        <label for="food">Food</label>
-      </div>
-      <div>
-        <input type="checkbox" id="clothing" name="categories" value="Clothing">
-        <label for="clothing">Clothing</label>
-      </div>
-      <div>
-        <input type="checkbox" id="housing" name="categories" value="Housing">
-        <label for="housing">Housing</label>
-      </div>
-      <div>
-        <input type="checkbox" id="healthcare" name="categories" value="Healthcare">
-        <label for="healthcare">Healthcare</label>
-      </div>
-      <input type="submit">
-    </form>
-  </body>
-</html>
+      xmlhttp.open("GET", "/api/user/{{ user.username }}", true);
+      xmlhttp.send();
+    })();
+  </script>
+  {% endfor %}
+</div>
+
+<h2>Create a User</h2>
+<form id="create_user" action="/api/user/new" method="POST">
+  <label>Username:
+    <br>
+    <input type="text" name="username">
+  </label>
+  <br>
+  <input type="submit">
+</form>
+
+<h2>Send Money</h2>
+<form id="add_money" action="/api/user/donate" method="POST">
+  <label>Sender Username:
+    <br>
+    <input type="text" name="sender">
+  </label>
+  <br>
+  <label>Receiver Username:
+    <br>
+    <input type="text" name="receiver">
+  </label>
+  <br>
+  <label>Amount to Send:
+    <br>
+    <input type="text" name="value">
+  </label>
+  <br>
+  <div>
+    <input type="checkbox" id="food" name="categories" value="Food">
+    <label for="food">Food</label>
+  </div>
+  <div>
+    <input type="checkbox" id="clothing" name="categories" value="Clothing">
+    <label for="clothing">Clothing</label>
+  </div>
+  <div>
+    <input type="checkbox" id="housing" name="categories" value="Housing">
+    <label for="housing">Housing</label>
+  </div>
+  <div>
+    <input type="checkbox" id="healthcare" name="categories" value="Healthcare">
+    <label for="healthcare">Healthcare</label>
+  </div>
+  <input type="submit">
+</form>
+{% endblock %}

@@ -6,6 +6,17 @@ from flask import jsonify, render_template, request
 from app import app, db
 from models import *
 
+# Frontend functions
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+# API Functions
+
 def error(message):
     return jsonify({'error': message, 'success': False}), 400
 
@@ -86,6 +97,8 @@ def get_account(username):
     result = {'success': True, 'balance': balance, 'sent_donations_breakdown': sent_donations, 'received_donations_breakdown': received_donations}
     return jsonify(result)
 
+
+# Admin functions
 
 @app.route('/admin')
 def admin_page():

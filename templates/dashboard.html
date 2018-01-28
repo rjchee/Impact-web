@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Impact{% endblock %}
+
+{% block head %}
+<style>
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+#map {
+  height: 100%;
+}
+/* Optional: Makes the sample page fill the window. */
+html, body {
+  height: 90%;
+  margin-left: 30px;
+  margin-right: 30px;
+  padding: 0;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>Dashboard</h1>
+<div id="map"></div>
+<script>
+  var map;
+  function initMap() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: position.coords.latitude, lng: position.coords.longitude},
+        zoom: 16
+      });
+    }, function () {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 30.6116439, lng: -96.34170909999999},
+          zoom: 16
+        });
+    });
+  }
+</script>
+<script async defer
+     src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_API_KEY }}&callback=initMap">
+</script>
+{% endblock %}
