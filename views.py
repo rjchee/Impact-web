@@ -1,7 +1,9 @@
-from flask import jsonify, request
+from decimal import Decimal
+
+from flask import jsonify, render_template, request
 
 from app import app, db
-from models import Donor, Donee, Account, Entry, Category
+from models import User, Account, Entry, Category
 
 def error(message):
     return jsonify({'error': message, 'success': False}), 400
@@ -33,17 +35,17 @@ def add_money():
     if not categories:
         return error('no categories specified')
     try:
-        value = float(value)
+        value = Decimal(value)
     except:
-        return error('`value` should be an integer')
+        return error('`value` should be a decimal')
     if value <= 0:
         return error('`value` should be positive')
     rcver = User.query.filter_by(username=receiver).first()
     if rcver is None:
         return error('user {} is not found'.format(receiver))
-    rcver.add_entry(value, categories)
+    rcver.account.add_entry(value, categories)
     db.session.commit()
-    return {'success': True}
+    return jsonify({'success': True})
 
 
 @app.route('/api/user/<username>', methods=['GET'])
@@ -55,7 +57,7 @@ def get_account(username):
     for e in user.account.entries:
         entries.append({
             'categories': [c.name for c in e.categories],
-            'value': e.value
+            'value': float(e.value)
         })
     result = {'success': True, 'entries': entries}
     return jsonify(result)

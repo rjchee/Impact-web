@@ -12,6 +12,7 @@ app.config.from_object(settings)
 db = SQLAlchemy(app)
 import models
 migrate = Migrate(app, db)
+import views
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=settings.PORT, debug=settings.DEBUG)

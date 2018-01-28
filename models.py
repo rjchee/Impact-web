@@ -20,18 +20,16 @@ class Account(db.Model):
 
     def add_entry(self, val, categories):
         categories = set(categories)
-        with db.session.begin():
-            entry = None
-            for e in entries:
-                if categories == set(c.name for c in e.categories):
-                    entry = e
-                    break
-            if entry:
-                entry.value += val
-            else:
-                entry = Entry(val, categories)
-                self.entries.append(entry)
-            db.session.commit()
+        entry = None
+        for e in self.entries:
+            if categories == set(c.name for c in e.categories):
+                entry = e
+                break
+        if entry:
+            entry.value += val
+        else:
+            entry = Entry(val, categories)
+            self.entries.append(entry)
 
 
 account_table = db.Table('account_helper',
