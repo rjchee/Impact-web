@@ -4,6 +4,7 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://use.fontawesome.com/571bb29bae.js"></script>
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/favicon-16x16.png') }}">
     {% block head %}{% endblock %}
   </head>
   <body>
