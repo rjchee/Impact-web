@@ -36,10 +36,13 @@ def create_user():
         return error('no username specified')
     lat = request.form.get('lat')
     lng = request.form.get('lng')
+    picture = request.form.get('picture')
     prefs = request.form.getlist('categories')
     preflist = Category.query.filter(Category.name.in_(prefs)).all()
     try:
         user = User(username)
+        if picture:
+            user.profile_picture = picture
         if lat:
             user.lat = lat
         if lng:
@@ -59,8 +62,11 @@ def edit_user():
     user = User.query.filter_by(username=username).first()
     if user is None:
         return error('no user "{}" found'.format(username))
+    picture = request.form.get('picture')
     lat = request.form.get('lat')
     lng = request.form.get('lng')
+    if picture:
+        user.profile_picture = picture
     if lat:
         user.lat = lat
     if lng:

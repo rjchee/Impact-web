@@ -3,6 +3,7 @@
 
 {% block body %}
 <h1>{{ user.username }}</h1>
+<img src="{{ user.profile_picture }}">
 {% if sent_donations %}
 <h2>Sent Donations</h2>
 <table>
