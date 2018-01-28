@@ -123,7 +123,7 @@ def get_account(username):
         })
     sent_donations = consolidate_donations(user.sent_donations)
     received_donations = consolidate_donations(user.received_donations)
-    result = {'success': True, 'balance': balance, 'sent_donations_breakdown': sent_donations, 'received_donations_breakdown': received_donations}
+    result = {'success': True, 'balance': balance, 'sent_donations_breakdown': sent_donations, 'received_donations_breakdown': received_donations, 'location': [user.lat, user.lng], 'preferences': [c.name for c in user.preferences]}
     return jsonify(result)
 
 @app.route('/api/users/', methods=['GET'])
