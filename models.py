@@ -17,6 +17,7 @@ class User(db.Model):
     lng = db.Column(db.Float(10))
     preferences = db.relationship('Category', secondary=preferences_table)
     score = db.Column(db.Float(5))
+    profile_picture = db.Column(db.String(80))
 
     def __init__(self, n):
         self.username = n
