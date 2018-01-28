@@ -18,6 +18,8 @@
 <div id="users" style="display: none">
   {% for user in users %}
   <h1>{{ user.username }}</h1>
+  <h2>({{ user.lat }}, {{ user.lng }})</h2>
+  <h2>Preferences: {{ user.preferences }}</h2>
   <table id="{{ user.username }}-table">
     <tr>
       <th style="text-align: left">Categories</th>
@@ -96,6 +98,64 @@
     <input type="text" name="username">
   </label>
   <br>
+  <label>Lat
+    <input type="text" name="lat">
+  </label>
+  <label>Long
+    <input type="text" name="lng">
+  </label>
+  <br>
+  <p>Preferences</p>
+  <div>
+    <input type="checkbox" id="food" name="categories" value="Food">
+    <label for="food">Food</label>
+  </div>
+  <div>
+    <input type="checkbox" id="clothing" name="categories" value="Clothing">
+    <label for="clothing">Clothing</label>
+  </div>
+  <div>
+    <input type="checkbox" id="housing" name="categories" value="Housing">
+    <label for="housing">Housing</label>
+  </div>
+  <div>
+    <input type="checkbox" id="healthcare" name="categories" value="Healthcare">
+    <label for="healthcare">Healthcare</label>
+  </div>
+  <input type="submit">
+</form>
+
+<h2>Update a user</h2>
+<form id="update_user" action="/api/user/edit" method="POST">
+  <label>Username:
+    <br>
+    <input type="text" name="username">
+  </label>
+  <br>
+  <label>Lat
+    <input type="text" name="lat">
+  </label>
+  <label>Long
+    <input type="text" name="lng">
+  </label>
+  <br>
+  <p>Preferences</p>
+  <div>
+    <input type="checkbox" id="food" name="categories" value="Food">
+    <label for="food">Food</label>
+  </div>
+  <div>
+    <input type="checkbox" id="clothing" name="categories" value="Clothing">
+    <label for="clothing">Clothing</label>
+  </div>
+  <div>
+    <input type="checkbox" id="housing" name="categories" value="Housing">
+    <label for="housing">Housing</label>
+  </div>
+  <div>
+    <input type="checkbox" id="healthcare" name="categories" value="Healthcare">
+    <label for="healthcare">Healthcare</label>
+  </div>
   <input type="submit">
 </form>
 

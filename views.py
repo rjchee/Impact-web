@@ -25,12 +25,43 @@ def create_user():
     username = request.form.get('username')
     if not username:
         return error('no username specified')
+    lat = request.form.get('lat')
+    lng = request.form.get('lng')
+    prefs = request.form.getlist('categories')
+    preflist = Category.query.filter(Category.name.in_(prefs)).all()
     try:
-        db.session.add(User(username))
+        user = User(username)
+        if lat:
+            user.lat = lat
+        if lng:
+            user.lng = lng
+        user.preferences = preflist
+        db.session.add(user)
         db.session.commit()
         return jsonify({'success': True})
     except:
         return error('the username already exists')
+
+@app.route('/api/user/edit', methods=['POST'])
+def edit_user():
+    username = request.form.get('username')
+    if not username:
+        return error('no username specified')
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        return error('no user "{}" found'.format(username))
+    lat = request.form.get('lat')
+    lng = request.form.get('lng')
+    if lat:
+        user.lat = lat
+    if lng:
+        user.lng = lng
+    prefs = request.form.getlist('categories')
+    if prefs:
+        user.preferences = Category.query.filter(Category.name.in_(prefs)).all()
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'success': True})
 
 @app.route('/api/user/donate', methods=['POST'])
 def donate_money():
@@ -91,12 +122,20 @@ def get_account(username):
             'value': float(e.value)
         })
     sent_donations = consolidate_donations(user.sent_donations)
-    print(user.sent_donations, sent_donations)
     received_donations = consolidate_donations(user.received_donations)
-    print(user.received_donations, received_donations)
     result = {'success': True, 'balance': balance, 'sent_donations_breakdown': sent_donations, 'received_donations_breakdown': received_donations}
     return jsonify(result)
 
+@app.route('/api/users/', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    results = []
+    for u in users:
+        sent_donations = consolidate_donations(u.sent_donations)
+        received_donations = consolidate_donations(u.received_donations)
+        obj = {'sent_donations_breakdown': sent_donations, 'received_donations_breakdown': received_donations}
+        results.append(obj)
+    return jsonify({'success': True, 'users': results})
 
 # Admin functions
 

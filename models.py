@@ -2,12 +2,20 @@ from sqlalchemy import and_
 
 from app import db
 
+
+preferences_table = db.Table('preferences_helper',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
+)
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     account = db.relationship('Account', uselist=False, back_populates='owner')
     lat = db.Column(db.Float(10))
     lng = db.Column(db.Float(10))
+    preferences = db.relationship('Category', secondary=preferences_table)
 
     def __init__(self, n):
         self.username = n
@@ -58,12 +66,17 @@ class Category(db.Model):
     def __init__(self, n):
         self.name = n
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return 'Category({})'.format(self.name)
+
 
 donation_table = db.Table('donation_helper',
     db.Column('donation_id', db.Integer, db.ForeignKey('donation.id'), primary_key=True),
     db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
 )
-
 
 class Donation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
