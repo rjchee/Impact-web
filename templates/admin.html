@@ -22,6 +22,8 @@
         <tr>
           <th style="text-align: left">Categories</th>
           <th style="text-align: left">Balance</th>
+          <th style="text-align: left">Sent Donations Total</th>
+          <th style="text-align: left">Received Donations Total</th>
         </tr>
       </table>
       <script>
@@ -31,18 +33,43 @@
               if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
                 if (xmlhttp.status == 200) {
                   var jsonResp = JSON.parse(xmlhttp.responseText);
-                  var entries = jsonResp.entries;
+                  var balance = jsonResp.balance;
                   var table = document.getElementById("{{ user.username }}-table");
-                  entries.forEach(function (entry) {
-                    var rowNode = document.createElement('tr');
+                  var rowNode = document.createElement('tr');
+                  balance.forEach(function (entry) {
+
+                    var categories = entry.categories.join(', ');
+
                     var categoryNode = document.createElement("td");
                     categoryNode.style.text_align = 'left';
-                    categoryNode.appendChild(document.createTextNode(entry.categories.join(', ')));
+                    categoryNode.appendChild(document.createTextNode(categories));
                     rowNode.appendChild(categoryNode);
+
                     var valueNode = document.createElement('td');
                     valueNode.style.text_align = 'left';
                     valueNode.appendChild(document.createTextNode(entry.value));
                     rowNode.appendChild(valueNode);
+
+                    var sentDonation = jsonResp.sent_donations_breakdown.find(function (el) {
+                      return el.categories.join(', ') === categories;
+                    });
+                    if (sentDonation !== undefined) {
+                      var sentNode = document.createElement('td');
+                      sentNode.style.text_align = 'left';
+                      sentNode.appendChild(document.createTextNode(sentDonation.value));
+                      rowNode.appendChild(sentNode);
+                    }
+
+                    var receivedDonation = jsonResp.received_donations_breakdown.find(function (el) {
+                      return el.categories.join(', ') === categories;
+                    });
+                    if (receivedDonation !== undefined) {
+                      var receivedNode = document.createElement('td');
+                      receivedNode.style.text_align = 'left';
+                      receivedNode.appendChild(document.createTextNode(receivedDonation.value));
+                      rowNode.appendChild(receivedNode);
+                    }
+
                     table.appendChild(rowNode);
                   });
                 }
@@ -73,7 +100,7 @@
     </form>
 
     <h2>Send Money</h2>
-    <form id="add_money" action="/api/user/add" method="POST">
+    <form id="add_money" action="/api/user/donate" method="POST">
       <label>Sender Username:
         <br>
         <input type="text" name="sender">
