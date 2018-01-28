@@ -6,6 +6,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     account = db.relationship('Account', uselist=False, back_populates='owner')
+    lat = db.Column(db.Float(10))
+    lng = db.Column(db.Float(10))
 
     def __init__(self, n):
         self.username = n
