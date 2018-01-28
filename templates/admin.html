@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Page</title>
+    <script>
+      function hideElement(eid) {
+        let node = document.getElementById(eid);
+        if (node.style.display === 'block') {
+          node.style.display = 'none';
+        } else {
+          node.style.display = 'block';
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <button type="button" onclick="hideElement('users')">Toggle Users Display</button>
+    <div id="users" style="display: none">
+      {% for user in users %}
+      <h1>{% user.username %}</h1>
+      <table>
+        <tr>
+          <th>Balance</th>
+          <th>Categories</th>
+        </tr>
+        {% for entry in user.account.entries %}
+        <tr>
+          <td>{% entry.value %}</td>
+          <td>{% ', '.join(c.name for c in entry.categories) %}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endfor %}
+    </div>
+
+    <h2>Create a User</h2>
+    <form id="create_user" action="/api/user/new">
+      <input type="text" name="username">
+      <input type="submit">
+    </form>
+
+    <h2>Send Money</h2>
+    <form id="add_money" action="/api/user/add">
+      <input type="text" name="sender">
+      <input type="text" name="receiver">
+      <input type="text" name="value">
+      <div>
+        <input type="checkbox" id="food" name="categories" value="Food">
+        <label for="food">Food</label>
+      </div>
+      <div>
+        <input type="checkbox" id="clothing" name="categories" value="Clothing">
+        <label for="clothing">Clothing</label>
+      </div>
+      <div>
+        <input type="checkbox" id="housing" name="categories" value="Housing">
+        <label for="housing">Housing</label>
+      </div>
+      <div>
+        <input type="checkbox" id="healthcare" name="categories" value="Healthcare">
+        <label for="healthcare">Healthcare</label>
+      </div>
+      <input type="submit">
+    </form>
+  </body>
+</html>

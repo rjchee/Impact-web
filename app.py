@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.config.from_object(settings)
 
 db = SQLAlchemy(app)
+import models
 migrate = Migrate(app, db)
 
 if __name__ == '__main__':
